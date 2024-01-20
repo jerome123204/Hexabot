@@ -21,11 +21,9 @@ async function fei(event, api) {
 
       const result = response.data.result;
       const message = `HexaClub "${result.result}"`;
-
-      request(result.s_image).pipe(fs.createWriteStream(imagePath)).on('finish', () => {
+      
         api.sendMessage({
           body: message,
-          attachment: fs.createReadStream(imagePath)
         }, event.threadID);
       });
     })
