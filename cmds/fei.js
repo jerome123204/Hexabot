@@ -3,7 +3,7 @@ const fs = require('fs');
 const request = require('request');
 const path = require('path');
 
-async function lyrics(event, api) {
+async function fei(event, api) {
   const input = event.body.toLowerCase().trim();
 
   if (input.includes("-help")) {
