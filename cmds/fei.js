@@ -18,14 +18,14 @@ async function fei(event, api) {
   try {
     const response = await axios.get(`https://scp-09.onrender.com/api/gpt?query=${title}`);
     const result = response.data.result;
-    const message = `HexaClub "${result.result}"`;
+    const message = `HexaClub ${result}`;
 
     api.sendMessage({
       body: message,
     }, event.threadID);
   } catch (error) {
     console.error(error);
-    api.sendMessage("Error while fetching lyrics and image. Please try again later.", event.threadID);
+    api.sendMessage("Error while fetching ai. Please try again later.", event.threadID);
   }
 }
 
