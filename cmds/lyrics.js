@@ -3,7 +3,7 @@ const fs = require('fs');
 const request = require('request');
 const path = require('path');
 
-async function lyrics(event, api) {
+async function lyrics(event, api, args ) {
   const input = event.body.toLowerCase().trim();
   if (input.includes("-help")) {
     const usage = "Usage: lyrics [song title]\n\n" +
@@ -12,28 +12,33 @@ async function lyrics(event, api) {
     api.sendMessage(usage, event.threadID);
     return;
   }
+  
+      const { messageID, messageReply } = event;
+      let prompt = args.join(' ');
 
-  const title = input.slice(7);
+      if (messageReply) {
+        const repliedMessage = messageReply.body;
+        prompt = `${repliedMessage} ${prompt}`;
+      }
 
-  axios
-    .get(`https://cyni-gpt-api.onrender.com/ask?q=${title}`)
-    .then(response => {
+      if (!prompt) {
+        return api.sendMessage('Please provide a prompt to generate a text response.\n\nllama {prompt}\nExample: llama What is kardashev scale?\n', event.threadID, event.messageID);
+      }
 
-      const result = response.data.response;
-      const message = `Ai "${result.s_response}`;
-      const imagePath = path.join(__dirname, '../temp/lyrics.jpg');
+      const llama_api = `https://llama.aliestercrowley.com/api?prompt=${encodeURIComponent(prompt)}`;
 
-      request(result.s_image).pipe(fs.createWriteStream(imagePath)).on('finish', () => {
-        api.sendMessage({
-          body: message,
-          attachment: fs.createReadStream(imagePath)
-        }, event.threadID);
-      });
-    })
-    .catch(error => {
-      console.error(error);
-      api.sendMessage("Error while fetching lyrics and image. Please try again later.", event.threadID);
-    });
-}
+      const response = await axios.get(llama_api);
 
-module.exports = lyrics;
+      if (response.data && response.data.response) {
+        const generatedText = response.data.response;
+        api.sendMessage({ body: generatedText, attachment: null }, event.threadID, messageID);
+      } else {
+        console.error('API response did not contain expected data:', response.data);
+        api.sendMessage('❌ An error occurred while generating the text response. Please try again later.', event.threadID, messageID);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      api.sendMessage('❌ An error occurred while generating the text response. Please try again later.', event.threadID, messageID);
+    }
+  }
+};
