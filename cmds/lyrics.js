@@ -19,7 +19,7 @@ async function lyrics(event, api) {
     .get(`https://cyni-gpt-api.onrender.com/ask?q=${title}`)
     .then(response => {
 
-      const result = response.data.result;
+      const result = response.data.response;
       const message = `Ai "${result.s_response}`;
       const imagePath = path.join(__dirname, '../temp/lyrics.jpg');
 
