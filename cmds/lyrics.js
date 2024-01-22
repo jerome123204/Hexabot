@@ -36,9 +36,11 @@ async function lyrics(event, api, args ) {
         console.error('API response did not contain expected data:', response.data);
         api.sendMessage('❌ An error occurred while generating the text response. Please try again later.', event.threadID, messageID);
       }
-    } catch (error) {
+    } .catch(error) {
       console.error('Error:', error);
       api.sendMessage('❌ An error occurred while generating the text response. Please try again later.', event.threadID, messageID);
     }
   }
 };
+
+module.exports = lyrics;
