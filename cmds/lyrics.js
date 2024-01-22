@@ -16,11 +16,11 @@ async function lyrics(event, api) {
   const title = input.slice(7);
 
   axios
-    .get(`https://sampleapi-mraikero-01.vercel.app/get/lyrics?title=${title}`)
+    .get(`https://cyni-gpt-api.onrender.com/ask?q=${title}`)
     .then(response => {
 
       const result = response.data.result;
-      const message = `Music Title "${result.s_title}" by ${result.s_artist}:\n\n${result.s_lyrics}`;
+      const message = `Ai "${result.s_response}`;
       const imagePath = path.join(__dirname, '../temp/lyrics.jpg');
 
       request(result.s_image).pipe(fs.createWriteStream(imagePath)).on('finish', () => {
